@@ -1,0 +1,49 @@
+app: leaderboard
+service: leaderboardService
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  versionFunctions: false
+  stage: ${opt:stage, 'dev'}
+  credentials:
+    accessKeyId: ${env:AWS_ACCESS_KEY_ID}
+    secretAccessKey: ${env:AWS_SECRET_ACCESS_KEY}
+  environment:
+    AWS_CUSTOM_REGION: ${env:AWS_CUSTOM_REGION}
+    API_KEY: ${env:API_KEY}
+  apiGateway:
+    usagePlan:
+      quota:
+        limit: 50000
+        offset: 2
+        period: MONTH
+      throttle:
+        burstLimit: 200
+        rateLimit: 100
+
+functions:
+  createLeaderboard:
+    handler: src/handlers/createLeaderboard.handler
+    logRetentionInDays: 14
+    memorySize: 128
+    timeout: 30
+    ephemeralStorageSize: 512
+    events:
+      - http:
+          path: leaderboard/create
+          method: post
+          cors: true
+
+plugins:
+  - serverless-offline
+  - serverless-plugin-include-dependencies 
+
+package:
+  exclude:
+    - node_modules/**
+    - leaderboardService/node_modules/**
+  include:
+    - src/services/**

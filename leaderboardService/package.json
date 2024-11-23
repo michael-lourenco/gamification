@@ -1,0 +1,20 @@
+{
+  "name": "leaderboardService",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "serverless deploy --stage dev --aws-profile kontempler"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "mongoose": "^8.6.1",
+    "serverless": "3",
+    "serverless-dotenv-plugin": "^6.0.0",
+    "serverless-offline": "^13.6.0"
+  },
+  "devDependencies": {
+    "serverless-plugin-include-dependencies": "^6.1.1"
+  }
+}
