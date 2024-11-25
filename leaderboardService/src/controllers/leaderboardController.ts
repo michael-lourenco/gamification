@@ -1,12 +1,17 @@
+interface CreateLeaderboardData {
+    leaderboardId: string; 
+    [key: string]: any;
+}
+
 class LeaderboardController {
     constructor() {
     }
 
-    async createLeaderboard({ leaderboardId, ...data }) {
-        try {            
+    async createLeaderboard({ leaderboardId, ...data }: CreateLeaderboardData) {
+        try {
             console.log("[LeaderboardController] createLeaderboard");
 
-            return {}   
+            return {}
         } catch (error) {
         
             console.error( "[LeaderboardController] createLeaderboard", error);

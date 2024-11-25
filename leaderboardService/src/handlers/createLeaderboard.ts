@@ -1,9 +1,12 @@
 import LeaderboardController from '../controllers/leaderboardController.js';
 import { HandlerError } from '../errors/handlerError.js';
 
-const handler = async (event) => {
+interface Event {
+  body: string;
+}
+const handler = async (event: Event) => {
   try {
-     
+
     const data = JSON.parse(event.body);
     
     const { leaderboardId } = data
@@ -16,9 +19,14 @@ const handler = async (event) => {
       statusCode: 200,
       body: JSON.stringify(response),
     };
-  } catch (err) {
-    console.error('Handler Error occurred:', err.message);
-    HandlerError.handledError(err);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error('Handler Error occurred:', err.message);
+      HandlerError.handledError(err);
+    } else {
+      console.error('An unknown error occurred');
+    }
+  
     return {
       statusCode: 500,
       body: JSON.stringify({ message: 'Internal Server Error' }),

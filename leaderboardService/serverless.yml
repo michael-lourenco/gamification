@@ -43,9 +43,8 @@ iam:
           - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMO_TABLE_LEADERBOARDS}/index/*"
           - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMO_TABLE_LEADERBOARDS}/stream/*"         
 
-
 resources:
-  Resources:           
+  Resources:
     LeaderboardTableDynamoDB:
       Type: 'AWS::DynamoDB::Table'
       Properties:
@@ -56,11 +55,11 @@ resources:
         KeySchema:
           - AttributeName: uid
             KeyType: HASH
-        BillingMode: PAY_PER_REQUEST  
+        BillingMode: PAY_PER_REQUEST
 
 functions:
   createLeaderboard:
-    handler: src/handlers/createLeaderboard.handler
+    handler: dist/handlers/createLeaderboard.handler
     logRetentionInDays: 14
     memorySize: 128
     timeout: 30
@@ -72,12 +71,15 @@ functions:
           cors: true
 
 plugins:
+  - serverless-plugin-typescript
+  - serverless-plugin-include-dependencies
   - serverless-offline
-  - serverless-plugin-include-dependencies 
 
 package:
   exclude:
     - node_modules/**
     - leaderboardService/node_modules/**
+    - src/**
   include:
-    - src/services/**
+  #   - src/services/**
+    - dist/**

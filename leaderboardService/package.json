@@ -5,16 +5,18 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "serverless deploy --stage dev --aws-profile kontempler"
+    "build": "tsc",
+    "deploy": "serverless deploy --stage dev --aws-profile kontempler"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
-    "mongoose": "^8.6.1",
-    "serverless": "3",
-    "serverless-dotenv-plugin": "^6.0.0",
-    "serverless-offline": "^13.6.0"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
   },
   "devDependencies": {
-    "serverless-plugin-include-dependencies": "^6.1.1"
+    "serverless": "^3.39.0",
+    "serverless-offline": "^13.8.3",
+    "serverless-plugin-include-dependencies": "^6.1.1",
+    "serverless-plugin-typescript": "^2.1.5"
   }
 }
