@@ -1,4 +1,4 @@
-import { ApiError, IApiError } from "./apiErrors.js";
+import { ApiError, IApiError } from "errors/apiErrors.js";
 
 class HandlerError extends ApiError {
     constructor({ statusCode = null, message = null, errorCode = null, shouldThrow = false }: Partial<IApiError>) {

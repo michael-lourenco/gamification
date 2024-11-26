@@ -1,5 +1,5 @@
-import LeaderboardController from '../controllers/leaderboardController.js';
-import { HandlerError } from '../errors/handlerError.js';
+import LeaderboardController from 'controllers/leaderboardController.js';
+import { HandlerError } from 'errors/handlerError.js';
 
 interface Event {
   body: string;

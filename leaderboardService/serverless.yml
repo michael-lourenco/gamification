@@ -59,7 +59,7 @@ resources:
 
 functions:
   createLeaderboard:
-    handler: dist/handlers/createLeaderboard.handler
+    handler: dist/useCases/create/index.handler
     logRetentionInDays: 14
     memorySize: 128
     timeout: 30
