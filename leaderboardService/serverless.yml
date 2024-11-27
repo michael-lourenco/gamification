@@ -24,24 +24,23 @@ provider:
       throttle:
         burstLimit: 200
         rateLimit: 100
-
-iam:
-  role:
-    statements:
-      - Effect: Allow
-        Action:
-          - dynamodb:PutItem
-          - dynamodb:GetItem
-          - dynamodb:Query
-          - dynamodb:DescribeStream
-          - dynamodb:GetRecords
-          - dynamodb:GetShardIterator
-          - dynamodb:ListStreams
-          - dynamodb:UpdateItem
-        Resource:
-          - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMO_TABLE_LEADERBOARDS}"
-          - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMO_TABLE_LEADERBOARDS}/index/*"
-          - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMO_TABLE_LEADERBOARDS}/stream/*"         
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:Query
+            - dynamodb:DescribeStream
+            - dynamodb:GetRecords
+            - dynamodb:GetShardIterator
+            - dynamodb:ListStreams
+            - dynamodb:UpdateItem
+          Resource:
+            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMO_TABLE_LEADERBOARDS}"
+            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMO_TABLE_LEADERBOARDS}/index/*"
+            - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMO_TABLE_LEADERBOARDS}/stream/*"         
 
 resources:
   Resources:
@@ -59,7 +58,7 @@ resources:
 
 functions:
   createLeaderboard:
-    handler: dist/useCases/create/index.handler
+    handler: dist/interfaceAdapters/lambdas/createLeaderboard.handler
     logRetentionInDays: 14
     memorySize: 128
     timeout: 30

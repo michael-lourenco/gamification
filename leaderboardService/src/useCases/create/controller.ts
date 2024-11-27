@@ -1,41 +1,37 @@
-import { CreateUseCase } from "useCases/create/useCase";
-// import { HandlerError } from '../../errors/handlerError';
-interface Event {
-  body: string;
-}
+import { CreateUseCase } from 'useCases/create/useCase.js';
+import { CreateLeaderboardDTO } from 'repositories/ILeaderboardsRepository.js';
+
 export class CreateController {
-  
-  constructor(
-    private createUseCase: CreateUseCase
-  ) { }
+  constructor(private createUseCase: CreateUseCase) {}
 
-
-  async handler(event: Event) {
-    const body = JSON.parse(event.body || '{}');
-
-
+  async handler(event: Partial<CreateLeaderboardDTO>) {
     try {
-      const data = await this.createUseCase.execute();
-
-      return {
-        statusCode: 200,
-        body: JSON.stringify(data),
-      };
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error('Handler Error occurred:', err.message);
-        // HandlerError.handledError(err);
-      } else {
-        console.error('An unknown error occurred');
+      if (
+        !event.id ||
+        !event.name ||
+        !event.owner ||
+        !event.description ||
+        !event.leaderboard ||
+        !event.date
+      ) {
+        throw new Error('Missing required fields');
       }
-    
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ message: err }),
+
+      const leaderboardData: CreateLeaderboardDTO = {
+        id: event.id,
+        name: event.name,
+        owner: event.owner,
+        description: event.description,
+        leaderboard: event.leaderboard,
+        date: event.date,
       };
+
+      const response = await this.createUseCase.execute(leaderboardData);
+
+      return response;
+    } catch (err: unknown) {
+      console.error('Error in CreateController:', err);
+      throw new Error('Failed to handle CreateController');
     }
   }
 }
-
-
-

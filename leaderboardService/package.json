@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "deploy": "serverless deploy --stage dev --aws-profile kontempler"
+    "deploy": "serverless deploy --stage dev --aws-profile kontempler",
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {
     "@types/aws-sdk": "^2.7.4",
@@ -20,6 +21,7 @@
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {
+    "prettier": "^3.4.1",
     "serverless": "^3.39.0",
     "serverless-offline": "^13.8.3",
     "serverless-plugin-include-dependencies": "^6.1.1",

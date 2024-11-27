@@ -1,24 +1,24 @@
-import { ILeaderboardsRepository } from "repositories/ILeaderboardsRepository";
+import {
+  ILeaderboardsRepository,
+  CreateLeaderboardDTO,
+} from 'repositories/ILeaderboardsRepository.js';
+import { Leaderboard } from 'entities/Leaderboard.js';
 
 export class CreateUseCase {
-  constructor(
-    private leaderboardsRepository: ILeaderboardsRepository,
-  ) { }
+  constructor(private leaderboardsRepository: ILeaderboardsRepository) {}
 
-  async execute() {
+  async execute(data: CreateLeaderboardDTO): Promise<Leaderboard> {
     try {
-      console.log("[CreateUseCase] execute");
-      const data = await this.leaderboardsRepository.create({
-        uid:`teste-id`,
-        name:`teste-name`,
-        owner:`teste-owner`,
-        description:`teste-description`,
-        leaderboard:[{uid:`teste-id`,name:`teste-name`,score:`teste-score`,date:new Date("2023-11-26T15:30:00Z")}]
-      });
+      let dateFix = data.date ? new Date(data.date) : null;
 
-      return data;
+      data.date = dateFix;
+
+      const createdLeaderboard = await this.leaderboardsRepository.create(data);
+
+      return createdLeaderboard;
     } catch (err) {
-      console.error('Error:', err);
+      console.error('Error in CreateUseCase:', err);
+      throw new Error('Failed to execute CreateUseCase');
     }
-  };
+  }
 }

@@ -1,24 +1,23 @@
-import { uuid } from "uuidv4";
+import { v4 as uuidv4 } from 'uuid';
 
 export interface PlayerData {
-    uid: string | null;
-    name: string | null;
-    score: string | null;
-    date: Date | null;
+  if: string;
+  name: string;
+  score: number;
+  date: Date | null;
 }
 
 export class Leaderboard {
-  public readonly uid: string;
+  public readonly id: string;
   public name: string;
   public owner: string;
   public description: string;
   public leaderboard: PlayerData[];
+  public date: Date | null;
 
-  constructor(props: Omit<Leaderboard, 'uid'>, uid?: string) {
+  constructor(props: Omit<Leaderboard, 'id'>, id?: string) {
     Object.assign(this, props);
-
-    if (!uid) {
-      this.uid = uuid();
-    }
+    this.id = id ?? uuidv4();
+    this.date = props.date ? new Date(props.date) : null;
   }
 }

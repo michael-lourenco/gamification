@@ -1,15 +1,15 @@
-import { Leaderboard, PlayerData } from "entities/Leaderboard.js";
-
+import { Leaderboard, PlayerData } from 'entities/Leaderboard.js';
 
 export interface CreateLeaderboardDTO {
-  uid: string;
+  id: string;
   name: string;
   owner: string;
   description: string;
   leaderboard: PlayerData[];
+  date: Date | null;
 }
 
 export interface ILeaderboardsRepository {
-  create(props: CreateLeaderboardDTO): Promise<Leaderboard>;
+  create(leaderboard: CreateLeaderboardDTO): Promise<Leaderboard>;
   findAll(): Promise<Leaderboard[]>;
 }
