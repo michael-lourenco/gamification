@@ -1,8 +1,8 @@
-import { CreateUseCase } from 'useCases/createLeaderboard/useCase.js';
+import { CreateLeaderboardUseCase } from 'useCases/createLeaderboard/useCase.js';
 import { CreateLeaderboardDTO } from 'repositories/ILeaderboardsRepository.js';
 
-export class CreateController {
-  constructor(private createUseCase: CreateUseCase) {}
+export class CreateLeaderboardController {
+  constructor(private createLeaderboardUseCase: CreateLeaderboardUseCase) {}
 
   async handler(event: Partial<CreateLeaderboardDTO>) {
     try {
@@ -26,12 +26,12 @@ export class CreateController {
         date: event.date,
       };
 
-      const response = await this.createUseCase.execute(leaderboardData);
+      const response = await this.createLeaderboardUseCase.execute(leaderboardData);
 
       return response;
     } catch (err: unknown) {
-      console.error('Error in CreateController:', err);
-      throw new Error('Failed to handle CreateController');
+      console.error('Error in CreateLeaderboardController:', err);
+      throw new Error('Failed to handle CreateLeaderboardController');
     }
   }
 }

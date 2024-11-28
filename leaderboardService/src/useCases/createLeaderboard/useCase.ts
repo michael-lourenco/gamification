@@ -4,7 +4,7 @@ import {
 } from 'repositories/ILeaderboardsRepository.js';
 import { Leaderboard } from 'entities/Leaderboard.js';
 
-export class CreateUseCase {
+export class CreateLeaderboardUseCase {
   constructor(private leaderboardsRepository: ILeaderboardsRepository) {}
 
   async execute(data: CreateLeaderboardDTO): Promise<Leaderboard> {
@@ -17,8 +17,8 @@ export class CreateUseCase {
 
       return createdLeaderboard;
     } catch (err) {
-      console.error('Error in CreateUseCase:', err);
-      throw new Error('Failed to execute CreateUseCase');
+      console.error('Error in CreateLeaderboardUseCase:', err);
+      throw new Error('Failed to execute CreateLeaderboardUseCase');
     }
   }
 }

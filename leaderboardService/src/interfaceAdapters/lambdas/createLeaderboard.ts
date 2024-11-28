@@ -1,4 +1,4 @@
-import { createController } from '../../useCases/createLeaderboard/index.js';
+import { createLeaderboardController } from '../../useCases/createLeaderboard/index.js';
 import { CreateLeaderboardDTO } from '../../repositories/ILeaderboardsRepository.js';
 import { HandlerError } from '../../errors/handlerError.js';
 
@@ -8,20 +8,17 @@ interface Event {
 
 const handler = async (event: Event) => {
   try {
-    // Verifica se o corpo do evento está presente
     if (!event.body) {
       throw HandlerError.invalidInput();
     }
-
-    // Tenta parsear o corpo do evento
+    
     let data: Partial<CreateLeaderboardDTO>;
     try {
       data = JSON.parse(event.body);
     } catch (err) {
       throw HandlerError.invalidInput();
     }
-
-    // Valida se todos os campos obrigatórios estão presentes
+    
     const requiredFields: (keyof CreateLeaderboardDTO)[] = [
       'id',
       'name',
@@ -36,9 +33,8 @@ const handler = async (event: Event) => {
         throw HandlerError.invalidInput();
       }
     }
-
-    // Chama o controlador para processar os dados
-    const response = await createController.handler(data);
+    
+    const response = await createLeaderboardController.handler(data);
 
     return {
       statusCode: 200,
@@ -59,9 +55,7 @@ const handler = async (event: Event) => {
       };
     }
     
-
-    // Caso contrário, trate como erro genérico
-    const error = err as Error; // Type assertion
+    const error = err as Error;
     const defaultError = HandlerError.default(error);
 
     return {
