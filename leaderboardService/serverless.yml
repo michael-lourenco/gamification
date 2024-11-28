@@ -36,6 +36,7 @@ provider:
             - dynamodb:GetRecords
             - dynamodb:GetShardIterator
             - dynamodb:ListStreams
+            - dynamodb:Scan
             - dynamodb:UpdateItem
           Resource:
             - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMO_TABLE_LEADERBOARDS}"
@@ -65,8 +66,20 @@ functions:
     ephemeralStorageSize: 512
     events:
       - http:
-          path: leaderboard/create
+          path: leaderboards/create
           method: post
+          cors: true
+
+  listLeaderboard:
+    handler: dist/interfaceAdapters/lambdas/listLeaderboards.handler
+    logRetentionInDays: 14
+    memorySize: 128
+    timeout: 30
+    ephemeralStorageSize: 512
+    events:
+      - http:
+          path: leaderboards/list
+          method: get
           cors: true
 
 plugins:
