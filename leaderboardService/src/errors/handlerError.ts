@@ -1,4 +1,4 @@
-import { ApiError, IApiError } from 'errors/apiErrors.js';
+import { ApiError, IApiError } from './apiErrors.js';
 
 class HandlerError extends ApiError {
   constructor({
