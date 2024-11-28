@@ -1,4 +1,4 @@
-import { createController } from '../../useCases/create/index.js';
+import { createController } from '../../useCases/createLeaderboard/index.js';
 import { CreateLeaderboardDTO } from '../../repositories/ILeaderboardsRepository.js';
 import { HandlerError } from '../../errors/handlerError.js';
 

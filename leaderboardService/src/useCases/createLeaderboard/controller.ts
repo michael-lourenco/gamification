@@ -1,4 +1,4 @@
-import { CreateUseCase } from 'useCases/create/useCase.js';
+import { CreateUseCase } from 'useCases/createLeaderboard/useCase.js';
 import { CreateLeaderboardDTO } from 'repositories/ILeaderboardsRepository.js';
 
 export class CreateController {
