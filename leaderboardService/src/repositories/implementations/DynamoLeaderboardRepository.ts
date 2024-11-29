@@ -68,7 +68,15 @@ export class DynamoLeaderboardRepository implements ILeaderboardsRepository {
     }
   }
 
-  async create(leaderboard: CreateLeaderboardDTO): Promise<Leaderboard> {
+  async create(leaderboardDTO: CreateLeaderboardDTO): Promise<Leaderboard> {
+    const leaderboard = new Leaderboard({
+      name: leaderboardDTO.name,
+      owner: leaderboardDTO.owner,
+      description: leaderboardDTO.description,
+      leaderboard: leaderboardDTO.leaderboard,
+      date: leaderboardDTO.date,
+    });
+
     const dynamoItem = this.toDynamoFormat(leaderboard);
 
     const params: AWS.DynamoDB.DocumentClient.PutItemInput = {
@@ -80,7 +88,6 @@ export class DynamoLeaderboardRepository implements ILeaderboardsRepository {
 
     return leaderboard;
   }
-
   async update(leaderboard: UpdateLeaderboardDTO): Promise<Leaderboard> {
     const dynamoItem = this.toDynamoFormat(leaderboard);
 
@@ -90,7 +97,7 @@ export class DynamoLeaderboardRepository implements ILeaderboardsRepository {
         uid: leaderboard.id,
       },
       UpdateExpression:
-        'set #name = :name, #owner = :owner, #description = :description, #leaderboard = :leaderboard, #date = :date',
+        'set #name = :name, #description = :description, #leaderboard = :leaderboard, #date = :date',
       ExpressionAttributeNames: {
         '#name': 'name',
         '#owner': 'owner',
