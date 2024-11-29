@@ -9,7 +9,17 @@ export interface CreateLeaderboardDTO {
   date: Date | null;
 }
 
+export interface UpdateLeaderboardDTO {
+  id: string;
+  name: string;
+  owner: string;
+  description: string;
+  leaderboard: PlayerData[];
+  date: Date | null;
+}
+
 export interface ILeaderboardsRepository {
   create(leaderboard: CreateLeaderboardDTO): Promise<Leaderboard>;
   findAll(): Promise<Leaderboard[]>;
+  update(leaderboard: UpdateLeaderboardDTO): Promise<Leaderboard>;
 }

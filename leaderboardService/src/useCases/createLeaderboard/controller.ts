@@ -26,7 +26,8 @@ export class CreateLeaderboardController {
         date: event.date,
       };
 
-      const response = await this.createLeaderboardUseCase.execute(leaderboardData);
+      const response =
+        await this.createLeaderboardUseCase.execute(leaderboardData);
 
       return response;
     } catch (err: unknown) {

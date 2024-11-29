@@ -4,6 +4,10 @@ import { CreateLeaderboardUseCase } from './useCase.js';
 
 const dynamoLeaderboardRepository = new DynamoLeaderboardRepository();
 
-export const createLeaderboardUseCase = new CreateLeaderboardUseCase(dynamoLeaderboardRepository);
+export const createLeaderboardUseCase = new CreateLeaderboardUseCase(
+  dynamoLeaderboardRepository,
+);
 
-export const createLeaderboardController = new CreateLeaderboardController(createLeaderboardUseCase);
+export const createLeaderboardController = new CreateLeaderboardController(
+  createLeaderboardUseCase,
+);

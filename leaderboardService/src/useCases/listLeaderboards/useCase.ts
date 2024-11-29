@@ -1,6 +1,4 @@
-import {
-  ILeaderboardsRepository
-} from 'repositories/ILeaderboardsRepository.js';
+import { ILeaderboardsRepository } from 'repositories/ILeaderboardsRepository.js';
 import { Leaderboard } from 'entities/Leaderboard.js';
 
 export class ListLeaderboardsUseCase {
@@ -8,7 +6,6 @@ export class ListLeaderboardsUseCase {
 
   async execute(): Promise<Leaderboard[]> {
     try {
-
       const listLeaderboards = await this.leaderboardsRepository.findAll();
 
       return listLeaderboards;

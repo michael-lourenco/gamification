@@ -5,7 +5,6 @@ export class ListLeaderboardsController {
 
   async handler() {
     try {
-
       const response = await this.listLeaderboardsUseCase.execute();
 
       return response;

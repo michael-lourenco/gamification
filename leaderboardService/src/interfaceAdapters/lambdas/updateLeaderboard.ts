@@ -1,5 +1,5 @@
-import { createLeaderboardController } from '../../useCases/createLeaderboard/index.js';
-import { CreateLeaderboardDTO } from '../../repositories/ILeaderboardsRepository.js';
+import { updateLeaderboardController } from '../../useCases/updateLeaderboard/index.js';
+import { UpdateLeaderboardDTO } from '../../repositories/ILeaderboardsRepository.js';
 import { HandlerError } from '../../errors/handlerError.js';
 
 interface Event {
@@ -12,14 +12,14 @@ const handler = async (event: Event) => {
       throw HandlerError.invalidInput();
     }
 
-    let data: Partial<CreateLeaderboardDTO>;
+    let data: Partial<UpdateLeaderboardDTO>;
     try {
       data = JSON.parse(event.body);
     } catch (err) {
       throw HandlerError.invalidInput();
     }
 
-    const requiredFields: (keyof CreateLeaderboardDTO)[] = [
+    const requiredFields: (keyof UpdateLeaderboardDTO)[] = [
       'id',
       'name',
       'owner',
@@ -34,7 +34,7 @@ const handler = async (event: Event) => {
       }
     }
 
-    const response = await createLeaderboardController.handler(data);
+    const response = await updateLeaderboardController.handler(data);
 
     return {
       statusCode: 200,

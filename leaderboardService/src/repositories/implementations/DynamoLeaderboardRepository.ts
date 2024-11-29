@@ -1,6 +1,7 @@
 import {
   ILeaderboardsRepository,
   CreateLeaderboardDTO,
+  UpdateLeaderboardDTO,
 } from '../ILeaderboardsRepository.js';
 import { Leaderboard } from '../../entities/Leaderboard.js';
 import AWS from 'aws-sdk';
@@ -78,5 +79,41 @@ export class DynamoLeaderboardRepository implements ILeaderboardsRepository {
     await dynamoDB.put(params).promise();
 
     return leaderboard;
+  }
+
+  async update(leaderboard: UpdateLeaderboardDTO): Promise<Leaderboard> {
+    const dynamoItem = this.toDynamoFormat(leaderboard);
+
+    const params: AWS.DynamoDB.DocumentClient.UpdateItemInput = {
+      TableName: this.tableName,
+      Key: {
+        uid: leaderboard.id,
+      },
+      UpdateExpression:
+        'set #name = :name, #owner = :owner, #description = :description, #leaderboard = :leaderboard, #date = :date',
+      ExpressionAttributeNames: {
+        '#name': 'name',
+        '#owner': 'owner',
+        '#description': 'description',
+        '#leaderboard': 'leaderboard',
+        '#date': 'date',
+      },
+      ExpressionAttributeValues: {
+        ':name': dynamoItem.name,
+        ':owner': dynamoItem.owner,
+        ':description': dynamoItem.description,
+        ':leaderboard': dynamoItem.leaderboard,
+        ':date': dynamoItem.date,
+      },
+      ReturnValues: 'ALL_NEW',
+    };
+
+    try {
+      const result = await dynamoDB.update(params).promise();
+      return this.fromDynamoFormat(result.Attributes);
+    } catch (error) {
+      console.error('Error updating leaderboard in DynamoDB:', error);
+      throw new Error('Failed to update leaderboard in DynamoDB.');
+    }
   }
 }
