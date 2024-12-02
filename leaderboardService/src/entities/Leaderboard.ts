@@ -4,7 +4,7 @@ export interface PlayerData {
   id: string;
   name: string;
   score: number;
-  date: Date | null;
+  date: Date;
 }
 
 export class Leaderboard {
@@ -13,7 +13,7 @@ export class Leaderboard {
   public readonly owner: string;
   public description: string;
   public leaderboard: PlayerData[];
-  public date: Date | null;
+  public date: Date;
 
   constructor(props: Omit<Leaderboard, 'id'>, id?: string) {
     if (!props.name || !props.owner) {
@@ -21,7 +21,7 @@ export class Leaderboard {
     }
     Object.assign(this, props);
     this.id = id ?? uuidv4();
-    this.date = props.date ? new Date(props.date) : null;
+    this.date = new Date(props.date);
     this.leaderboard = props.leaderboard ?? [];
   }
   

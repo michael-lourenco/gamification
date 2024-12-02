@@ -9,9 +9,8 @@ export class UpdateLeaderboardUseCase {
 
   async execute(data: UpdateLeaderboardDTO): Promise<Leaderboard> {
     try {
-      let dateFix = data.date ? new Date(data.date) : null;
 
-      data.date = dateFix;
+      data.date = new Date(data.date);
 
       const updatedLeaderboard = await this.leaderboardsRepository.update(data);
 

@@ -58,6 +58,8 @@ resources:
             AttributeType: S
           - AttributeName: owner
             AttributeType: S
+          - AttributeName: date
+            AttributeType: S 
         KeySchema:
           - AttributeName: uid
             KeyType: HASH
@@ -69,7 +71,14 @@ resources:
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
-
+          - IndexName: OwnerDateIndex
+            KeySchema:
+              - AttributeName: owner
+                KeyType: HASH
+              - AttributeName: date
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
 
 functions:
   createLeaderboard:
@@ -118,6 +127,34 @@ functions:
               - Authorization
             allowCredentials: false
 
+  findFirstByOwnerAndDate:
+    handler: dist/interfaceAdapters/lambdas/findFirstByOwnerAndDate.handler
+    logRetentionInDays: 14
+    memorySize: 128
+    timeout: 30
+    ephemeralStorageSize: 512
+    events:
+      - http:
+          path: leaderboards/findFirstByOwnerAndDate/{date}
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-api-key
+              - Authorization
+            allowCredentials: false
+      - http:
+          path: leaderboards/findFirstByOwnerAndDate/{date}
+          method: options
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-api-key
+              - Authorization
+            allowCredentials: false
+
 
   updateLeaderboard:
     handler: dist/interfaceAdapters/lambdas/updateLeaderboard.handler
@@ -152,11 +189,11 @@ package:
     - dist/**
 
 
-custom:
-  serverless-offline:
-    corsAllowOrigin: '*'
-    corsAllowHeaders:
-      - Content-Type
-      - x-api-key
-      - Authorization
-    corsAllowCredentials: false
+# custom:
+#   serverless-offline:
+#     corsAllowOrigin: '*'
+#     corsAllowHeaders:
+#       - Content-Type
+#       - x-api-key
+#       - Authorization
+#     corsAllowCredentials: false 

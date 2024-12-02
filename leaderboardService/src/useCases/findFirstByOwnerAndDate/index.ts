@@ -1,6 +1,6 @@
 import { DynamoLeaderboardRepository } from '../../repositories/implementations/DynamoLeaderboardRepository.js';
-import { CreateLeaderboardController } from './controller.js';
-import { CreateLeaderboardUseCase } from './useCase.js';
+import { FindFirstByOwnerAndDateController } from './controller.js';
+import { FindFirstByOwnerAndDateUseCase } from './useCase.js';
 import AWS from 'aws-sdk';
 
 const dynamoDB=  new AWS.DynamoDB.DocumentClient({
@@ -17,10 +17,10 @@ const dynamoLeaderboardRepository = new DynamoLeaderboardRepository(
   tableName
 );
 
-export const createLeaderboardUseCase = new CreateLeaderboardUseCase(
+export const findFirstByOwnerAndDateUseCase = new FindFirstByOwnerAndDateUseCase(
   dynamoLeaderboardRepository,
 );
 
-export const createLeaderboardController = new CreateLeaderboardController(
-  createLeaderboardUseCase,
+export const findFirstByOwnerAndDateController = new FindFirstByOwnerAndDateController(
+  findFirstByOwnerAndDateUseCase,
 );

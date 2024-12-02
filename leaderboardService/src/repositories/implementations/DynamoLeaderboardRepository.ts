@@ -3,21 +3,34 @@ import {
   CreateLeaderboardDTO,
   UpdateLeaderboardDTO,
 } from '../ILeaderboardsRepository.js';
-import { Leaderboard } from '../../entities/Leaderboard.js';
+import { Leaderboard,PlayerData } from '../../entities/Leaderboard.js';
 import AWS from 'aws-sdk';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const dynamoDB = new AWS.DynamoDB.DocumentClient({
-  region: process.env.DYNAMO_REGION,
-  endpoint: process.env.DYNAMO_ENDPOINT,
-  accessKeyId: process.env.DYNAMO_ACCESS_KEY_ID,
-  secretAccessKey: process.env.DYNAMO_SECRET_ACCESS_KEY,
-});
 
 export class DynamoLeaderboardRepository implements ILeaderboardsRepository {
-  private tableName = process.env.DYNAMO_TABLE_LEADERBOARDS!;
+  constructor(
+    private dynamoDB: AWS.DynamoDB.DocumentClient,
+    private tableName: string,
+  ) {}
+
+
+  private sortLeaderboard(leaderboard: PlayerData[]): PlayerData[] {
+
+    leaderboard.forEach((player) => {
+      if (typeof player.date === "string") {
+        player.date = new Date(player.date);
+      }
+    });
+  
+    leaderboard.sort((a, b) => {
+      if (b.score !== a.score) {
+        return b.score - a.score; 
+      }
+      return a.date.getTime() - b.date.getTime(); 
+    });
+  
+
+    return leaderboard;
+  }
 
   private toDynamoFormat(leaderboard: Leaderboard): any {
     return {
@@ -37,53 +50,67 @@ export class DynamoLeaderboardRepository implements ILeaderboardsRepository {
         owner: item.owner,
         description: item.description,
         leaderboard: item.leaderboard,
-        date: item.date ? new Date(item.date) : null,
+        date: new Date(item.date),
       },
       item.uid,
     );
   }
 
-  async findAll({ owner }: { owner: string }): Promise<Leaderboard[]> {
+  async findAll({
+    owner,
+    limit = 10,
+    startKey,
+  }: {
+    owner: string;
+    limit?: number;
+    startKey?: AWS.DynamoDB.DocumentClient.Key;
+  }): Promise<Leaderboard[]> {
     const params: AWS.DynamoDB.DocumentClient.QueryInput = {
       TableName: this.tableName,
       IndexName: 'OwnerIndex',
       KeyConditionExpression: '#owner = :owner',
-      ExpressionAttributeNames: {
-        '#owner': 'owner',
-      },
-      ExpressionAttributeValues: {
-        ':owner': owner,
-      },
+      ExpressionAttributeNames: { '#owner': 'owner' },
+      ExpressionAttributeValues: { ':owner': owner },
+      Limit: limit,
+      ExclusiveStartKey: startKey,
     };
-  
+
     let allItems: Leaderboard[] = [];
     let queryResult;
-  
+
     try {
       do {
-        queryResult = await dynamoDB.query(params).promise();
+        queryResult = await this.dynamoDB.query(params).promise();
         const items = queryResult.Items?.map((item) =>
           this.fromDynamoFormat(item),
         );
         allItems = allItems.concat(items ?? []);
         params.ExclusiveStartKey = queryResult.LastEvaluatedKey;
       } while (queryResult.LastEvaluatedKey);
-  
+
       return allItems;
     } catch (error) {
-      console.error('Error querying DynamoDB:', error);
-      throw new Error('Failed to fetch leaderboards by owner from DynamoDB.');
+      if (error instanceof Error) {
+        throw new Error(
+          `Failed to fetch leaderboard by owner and date from DynamoDB. Error: ${error.message}`,
+        );
+      } else {
+        throw new Error(
+          `Failed unknown error fetching leaderboard by owner and date from DynamoDB. Error: ${error}`,
+        );
+      }
     }
   }
-  
-  async create(leaderboardDTO: CreateLeaderboardDTO): Promise<Leaderboard> {
-    const leaderboard = new Leaderboard({
-      name: leaderboardDTO.name,
-      owner: leaderboardDTO.owner,
-      description: leaderboardDTO.description,
-      leaderboard: leaderboardDTO.leaderboard,
-      date: leaderboardDTO.date,
-    });
+
+  async create(leaderboard: Leaderboard): Promise<Leaderboard> {
+    const leaderboardSorted = this.sortLeaderboard(
+      leaderboard.leaderboard.map((player) => ({
+        ...player,
+        date: typeof player.date === 'string' ? new Date(player.date) : player.date,
+      })),
+    );
+
+    leaderboard.leaderboard = leaderboardSorted;
 
     const dynamoItem = this.toDynamoFormat(leaderboard);
 
@@ -92,11 +119,74 @@ export class DynamoLeaderboardRepository implements ILeaderboardsRepository {
       Item: dynamoItem,
     };
 
-    await dynamoDB.put(params).promise();
-
-    return leaderboard;
+    try {
+      await this.dynamoDB.put(params).promise();
+      return leaderboard;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(
+          `Failed to fetch leaderboard by owner and date from DynamoDB. Error: ${error.message}`,
+        );
+      } else {
+        throw new Error(
+          `Failed unknown error fetching leaderboard by owner and date from DynamoDB. Error: ${error}`,
+        );
+      }
+    }
   }
-  async update(leaderboard: UpdateLeaderboardDTO): Promise<Leaderboard> {
+
+  async findFirstByOwnerAndDate({
+    owner,
+    date,
+  }: {
+    owner: string;
+    date: Date;
+  }): Promise<Leaderboard | null> {
+    const startOfDay = new Date(date);
+    startOfDay.setUTCHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(date);
+    endOfDay.setUTCHours(23, 59, 59, 999);
+
+    const params: AWS.DynamoDB.DocumentClient.QueryInput = {
+      TableName: this.tableName,
+      IndexName: 'OwnerDateIndex',
+      KeyConditionExpression:
+        '#owner = :owner and #date BETWEEN :startOfDay AND :endOfDay',
+      ExpressionAttributeNames: {
+        '#owner': 'owner',
+        '#date': 'date',
+      },
+      ExpressionAttributeValues: {
+        ':owner': owner,
+        ':startOfDay': startOfDay.toISOString(),
+        ':endOfDay': endOfDay.toISOString(),
+      },
+      Limit: 1,
+    };
+
+    try {
+      const queryResult = await this.dynamoDB.query(params).promise();
+
+      if (!queryResult.Items || queryResult.Items.length === 0) {
+        return null;
+      }
+
+      return this.fromDynamoFormat(queryResult.Items[0]);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(
+          `Failed to fetch leaderboard by owner and date from DynamoDB. Error: ${error.message}`,
+        );
+      } else {
+        throw new Error(
+          `Failed unknown error fetching leaderboard by owner and date from DynamoDB. Error: ${error}`,
+        );
+      }
+    }
+  }
+
+  async update(leaderboard: Leaderboard): Promise<Leaderboard> {
     const dynamoItem = this.toDynamoFormat(leaderboard);
 
     const params: AWS.DynamoDB.DocumentClient.UpdateItemInput = {
@@ -108,14 +198,12 @@ export class DynamoLeaderboardRepository implements ILeaderboardsRepository {
         'set #name = :name, #description = :description, #leaderboard = :leaderboard, #date = :date',
       ExpressionAttributeNames: {
         '#name': 'name',
-        '#owner': 'owner',
         '#description': 'description',
         '#leaderboard': 'leaderboard',
         '#date': 'date',
       },
       ExpressionAttributeValues: {
         ':name': dynamoItem.name,
-        ':owner': dynamoItem.owner,
         ':description': dynamoItem.description,
         ':leaderboard': dynamoItem.leaderboard,
         ':date': dynamoItem.date,
@@ -124,11 +212,18 @@ export class DynamoLeaderboardRepository implements ILeaderboardsRepository {
     };
 
     try {
-      const result = await dynamoDB.update(params).promise();
+      const result = await this.dynamoDB.update(params).promise();
       return this.fromDynamoFormat(result.Attributes);
     } catch (error) {
-      console.error('Error updating leaderboard in DynamoDB:', error);
-      throw new Error('Failed to update leaderboard in DynamoDB.');
+      if (error instanceof Error) {
+        throw new Error(
+          `Failed to fetch leaderboard by owner and date from DynamoDB. Error: ${error.message}`,
+        );
+      } else {
+        throw new Error(
+          `Failed unknown error fetching leaderboard by owner and date from DynamoDB. Error: ${error}`,
+        );
+      }
     }
   }
 }
