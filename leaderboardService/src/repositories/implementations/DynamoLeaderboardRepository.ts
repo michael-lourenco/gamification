@@ -43,31 +43,39 @@ export class DynamoLeaderboardRepository implements ILeaderboardsRepository {
     );
   }
 
-  async findAll(): Promise<Leaderboard[]> {
-    const scanParams: AWS.DynamoDB.DocumentClient.ScanInput = {
+  async findAll({ owner }: { owner: string }): Promise<Leaderboard[]> {
+    const params: AWS.DynamoDB.DocumentClient.QueryInput = {
       TableName: this.tableName,
+      IndexName: 'OwnerIndex',
+      KeyConditionExpression: '#owner = :owner',
+      ExpressionAttributeNames: {
+        '#owner': 'owner',
+      },
+      ExpressionAttributeValues: {
+        ':owner': owner,
+      },
     };
-
+  
     let allItems: Leaderboard[] = [];
-    let scanResult;
-
+    let queryResult;
+  
     try {
       do {
-        scanResult = await dynamoDB.scan(scanParams).promise();
-        const items = scanResult.Items?.map((item) =>
+        queryResult = await dynamoDB.query(params).promise();
+        const items = queryResult.Items?.map((item) =>
           this.fromDynamoFormat(item),
         );
         allItems = allItems.concat(items ?? []);
-        scanParams.ExclusiveStartKey = scanResult.LastEvaluatedKey;
-      } while (scanResult.LastEvaluatedKey);
-
+        params.ExclusiveStartKey = queryResult.LastEvaluatedKey;
+      } while (queryResult.LastEvaluatedKey);
+  
       return allItems;
     } catch (error) {
-      console.error('Error scanning DynamoDB:', error);
-      throw new Error('Failed to fetch leaderboards from DynamoDB.');
+      console.error('Error querying DynamoDB:', error);
+      throw new Error('Failed to fetch leaderboards by owner from DynamoDB.');
     }
   }
-
+  
   async create(leaderboardDTO: CreateLeaderboardDTO): Promise<Leaderboard> {
     const leaderboard = new Leaderboard({
       name: leaderboardDTO.name,

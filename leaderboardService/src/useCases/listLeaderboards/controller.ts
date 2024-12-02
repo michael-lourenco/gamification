@@ -3,9 +3,9 @@ import { ListLeaderboardsUseCase } from './useCase.js';
 export class ListLeaderboardsController {
   constructor(private listLeaderboardsUseCase: ListLeaderboardsUseCase) {}
 
-  async handler() {
+  async handler({ owner }: { owner: string }) {
     try {
-      const response = await this.listLeaderboardsUseCase.execute();
+      const response = await this.listLeaderboardsUseCase.execute({owner});
 
       return response;
     } catch (err: unknown) {

@@ -20,6 +20,6 @@ export interface UpdateLeaderboardDTO {
 
 export interface ILeaderboardsRepository {
   create(leaderboard: CreateLeaderboardDTO): Promise<Leaderboard>;
-  findAll(): Promise<Leaderboard[]>;
+  findAll({ owner }: { owner: string }): Promise<Leaderboard[]>;
   update(leaderboard: UpdateLeaderboardDTO): Promise<Leaderboard>;
 }

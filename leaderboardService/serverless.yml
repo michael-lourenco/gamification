@@ -24,6 +24,10 @@ provider:
       throttle:
         burstLimit: 200
         rateLimit: 100
+    headers:
+      - x-api-key
+      - Content-Type
+      - Authorization
   iam:
     role:
       statements:
@@ -52,10 +56,20 @@ resources:
         AttributeDefinitions:
           - AttributeName: uid
             AttributeType: S
+          - AttributeName: owner
+            AttributeType: S
         KeySchema:
           - AttributeName: uid
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
+        GlobalSecondaryIndexes:
+          - IndexName: OwnerIndex
+            KeySchema:
+              - AttributeName: owner
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+
 
 functions:
   createLeaderboard:
@@ -75,7 +89,7 @@ functions:
               - x-api-key
               - Authorization
             allowCredentials: false
-
+          
   listLeaderboard:
     handler: dist/interfaceAdapters/lambdas/listLeaderboards.handler
     logRetentionInDays: 14
@@ -102,6 +116,8 @@ functions:
               - Content-Type
               - x-api-key
               - Authorization
+            allowCredentials: false
+
 
   updateLeaderboard:
     handler: dist/interfaceAdapters/lambdas/updateLeaderboard.handler
@@ -134,3 +150,13 @@ package:
   include:
   #   - src/services/**
     - dist/**
+
+
+custom:
+  serverless-offline:
+    corsAllowOrigin: '*'
+    corsAllowHeaders:
+      - Content-Type
+      - x-api-key
+      - Authorization
+    corsAllowCredentials: false

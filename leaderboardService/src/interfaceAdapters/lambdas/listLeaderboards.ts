@@ -1,16 +1,51 @@
 import { listLeaderboardsController } from '../../useCases/listLeaderboards/index.js';
 import { HandlerError } from '../../errors/handlerError.js';
 
-const handler = async () => {
+type CustomEvent = {
+  headers: {
+    [key: string]: string | undefined;
+  };
+  resource?: string;
+  path?: string;
+  httpMethod?: string;
+  [key: string]: any; // Permite propriedades adicionais
+};
+
+const handler = async (event: CustomEvent) => {
   try {
-    const response = await listLeaderboardsController.handler();
+    console.log('EVENT  ::::::::::::::: ', event);
+
+    // Tratamento para requisições OPTIONS (Preflight)
+    if (event.httpMethod === 'OPTIONS') {
+      return {
+        statusCode: 204, // Sem conteúdo
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': 'Content-Type,x-api-key,Authorization',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        },
+      };
+    }
+
+    const apiKey = event.headers['x-api-key'];
+
+    let owner = '';
+
+    if (apiKey) {
+      owner = apiKey.split('|')[0];
+    }
+
+    console.log('API KEY  ::::::::::::::: ', apiKey);
+    console.log('OWNER ::::::::::::::: ', owner);
+
+    const response = await listLeaderboardsController.handler({ owner });
 
     return {
       statusCode: 200,
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type,x-api-key,Authorization',
-        'Access-Control-Allow-Methods': 'GET,OPTIONS',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
         'Access-Control-Expose-Headers':
           'WWW-Authenticate,Server-Authorization',
       },
@@ -24,6 +59,9 @@ const handler = async () => {
       const defaultError = HandlerError.default(error);
       return {
         statusCode: defaultError['statusCode'],
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
         body: JSON.stringify({
           message: defaultError.message,
           errorCode: defaultError['errorCode'],

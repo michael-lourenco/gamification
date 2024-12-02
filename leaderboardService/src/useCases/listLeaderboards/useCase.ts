@@ -4,9 +4,9 @@ import { Leaderboard } from 'entities/Leaderboard.js';
 export class ListLeaderboardsUseCase {
   constructor(private leaderboardsRepository: ILeaderboardsRepository) {}
 
-  async execute(): Promise<Leaderboard[]> {
+  async execute({ owner }: { owner: string }): Promise<Leaderboard[]> {
     try {
-      const listLeaderboards = await this.leaderboardsRepository.findAll();
+      const listLeaderboards = await this.leaderboardsRepository.findAll({owner});
 
       return listLeaderboards;
     } catch (err) {
