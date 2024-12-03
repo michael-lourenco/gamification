@@ -1,11 +1,16 @@
 import { FindFirstByOwnerAndDateUseCase } from './useCase.js';
 
 export class FindFirstByOwnerAndDateController {
-  constructor(private findFirstByOwnerAndDateUseCase: FindFirstByOwnerAndDateUseCase) {}
+  constructor(
+    private findFirstByOwnerAndDateUseCase: FindFirstByOwnerAndDateUseCase,
+  ) {}
 
-  async handler({ owner, date }: { owner: string, date: Date }) {
+  async handler({ owner, date }: { owner: string; date: Date }) {
     try {
-      const response = await this.findFirstByOwnerAndDateUseCase.execute({owner, date});
+      const response = await this.findFirstByOwnerAndDateUseCase.execute({
+        owner,
+        date,
+      });
 
       return response;
     } catch (err: unknown) {

@@ -1,14 +1,14 @@
-# Gamification -  SaaS Platform 🎮🚀  
+# Gamification -  API 🎮🚀  
 
 ## Project Description  
-Welcome to **Gamification**, a comprehensive **SaaS (Software as a Service)** platform for gamification! Gamification provides powerful and flexible tools to help businesses, applications, and services integrate gamification features, boosting user engagement and enhancing interactivity.  
+Welcome to **Gamification**, a comprehensive **API** for gamification! Gamification provides powerful and flexible tools to help businesses, applications, and services integrate gamification features, boosting user engagement and enhancing interactivity.  
 
-The platform's first available feature is the **Leaderboard Service**, a customizable ranking system that can be tailored to different needs. In the future, Gamification will expand with additional gamification models, making it the ultimate solution for creating dynamic user experiences.  
+The API first available feature is the **Leaderboard Service**, a customizable ranking system that can be tailored to different needs. In the future, Gamification will expand with additional gamification models, making it the ultimate solution for creating dynamic user experiences.  
 
 ### Key Features  
 
-#### **Universal Gamification Platform**  
-Gamification is a modular SaaS platform designed to work with any type of application, whether **online** or **offline**, offering data-focused solutions without visual dependencies.  
+#### **Universal Gamification API**  
+Gamification is a modular API designed to work with any type of application, whether **online** or **offline**, offering data-focused solutions without visual dependencies.  
 
 #### **Leaderboard Service (First Module)**  
 The leaderboard service provides a customizable ranking system with:  
@@ -40,7 +40,7 @@ Each client has a dedicated database with an exclusive API key, ensuring secure 
 - **Fitness Platforms:** Tracking personal records and real-time competition.  
 
 ### MVP  
-The **Leaderboard Service** is the first module of the platform, offering a robust and flexible ranking system. This MVP allows early adopters, such as **Conti Go**, to validate the platform's potential and explore its initial features.  
+The **Leaderboard Service** is the first module of the platform, offering a robust and flexible ranking system. This MVP allows early adopters, such as **Conti Go**, to validate the API potential and explore its initial features.  
 
 ## How to Contribute  
 - Report issues or suggest improvements in the *issues* tab.  
@@ -49,6 +49,6 @@ The **Leaderboard Service** is the first module of the platform, offering a robu
 
 ---
 
-💡 **Gamification is the perfect platform for any application seeking to integrate gamification features in a simple, efficient, and scalable way. Start your journey with us and help redefine user engagement!**  
+💡 **Gamification is the perfect API for any application seeking to integrate gamification features in a simple, efficient, and scalable way. Start your journey with us and help redefine user engagement!**  
 
 **Project GitHub Link:** [gamification](https://github.com/michael-lourenco/gamification)

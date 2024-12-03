@@ -25,8 +25,8 @@ export interface ILeaderboardsRepository {
     owner,
     date,
   }: {
-    owner: string,
-    date: Date
+    owner: string;
+    date: Date;
   }): Promise<Leaderboard | null>;
   update(leaderboard: UpdateLeaderboardDTO): Promise<Leaderboard>;
 }

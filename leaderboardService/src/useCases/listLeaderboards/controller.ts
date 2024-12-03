@@ -5,7 +5,7 @@ export class ListLeaderboardsController {
 
   async handler({ owner }: { owner: string }) {
     try {
-      const response = await this.listLeaderboardsUseCase.execute({owner});
+      const response = await this.listLeaderboardsUseCase.execute({ owner });
 
       return response;
     } catch (err: unknown) {

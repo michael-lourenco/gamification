@@ -8,20 +8,20 @@ type CustomEvent = {
   resource?: string;
   path?: string;
   httpMethod?: string;
-  [key: string]: any; // Permite propriedades adicionais
+  [key: string]: any;
 };
 
 const handler = async (event: CustomEvent) => {
   try {
     console.log('EVENT  ::::::::::::::: ', event);
 
-    // Tratamento para requisições OPTIONS (Preflight)
     if (event.httpMethod === 'OPTIONS') {
       return {
-        statusCode: 204, // Sem conteúdo
+        statusCode: 204,
         headers: {
           'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers': 'Content-Type,x-api-key,Authorization',
+          'Access-Control-Allow-Headers':
+            'Content-Type,x-api-key,Authorization',
           'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
         },
       };
@@ -30,18 +30,17 @@ const handler = async (event: CustomEvent) => {
     const apiKey = event.headers['x-api-key'];
 
     const date = new Date(event.pathParameters.date);
-    
-    console.log("DATE ::::::::::::::::: ", date);
+
     let owner = '';
 
     if (apiKey) {
       owner = apiKey.split('|')[0];
     }
 
-    console.log('API KEY  ::::::::::::::: ', apiKey);
-    console.log('OWNER ::::::::::::::: ', owner);
-
-    const response = await findFirstByOwnerAndDateController.handler({ owner, date });
+    const response = await findFirstByOwnerAndDateController.handler({
+      owner,
+      date,
+    });
 
     return {
       statusCode: 200,
@@ -72,8 +71,7 @@ const handler = async (event: CustomEvent) => {
       };
     }
 
-    // Caso contrário, trate como erro genérico
-    const error = err as Error; // Type assertion
+    const error = err as Error;
     const defaultError = HandlerError.default(error);
 
     return {

@@ -24,7 +24,6 @@ export class Leaderboard {
     this.date = new Date(props.date);
     this.leaderboard = props.leaderboard ?? [];
   }
-  
 
   // addPlayer(player: PlayerData) {
   //   if (this.leaderboard.some(p => p.id === player.id)) {

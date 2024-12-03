@@ -21,7 +21,8 @@ const handler = async (event: CustomEvent) => {
         statusCode: 204, // Sem conteúdo
         headers: {
           'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers': 'Content-Type,x-api-key,Authorization',
+          'Access-Control-Allow-Headers':
+            'Content-Type,x-api-key,Authorization',
           'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
         },
       };

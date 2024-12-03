@@ -3,7 +3,7 @@ import { FindFirstByOwnerAndDateController } from './controller.js';
 import { FindFirstByOwnerAndDateUseCase } from './useCase.js';
 import AWS from 'aws-sdk';
 
-const dynamoDB=  new AWS.DynamoDB.DocumentClient({
+const dynamoDB = new AWS.DynamoDB.DocumentClient({
   region: process.env.DYNAMO_REGION,
   endpoint: process.env.DYNAMO_ENDPOINT,
   accessKeyId: process.env.DYNAMO_ACCESS_KEY_ID,
@@ -14,13 +14,11 @@ const tableName = process.env.DYNAMO_TABLE_LEADERBOARDS ?? `leaderboards-dev`;
 
 const dynamoLeaderboardRepository = new DynamoLeaderboardRepository(
   dynamoDB,
-  tableName
+  tableName,
 );
 
-export const findFirstByOwnerAndDateUseCase = new FindFirstByOwnerAndDateUseCase(
-  dynamoLeaderboardRepository,
-);
+export const findFirstByOwnerAndDateUseCase =
+  new FindFirstByOwnerAndDateUseCase(dynamoLeaderboardRepository);
 
-export const findFirstByOwnerAndDateController = new FindFirstByOwnerAndDateController(
-  findFirstByOwnerAndDateUseCase,
-);
+export const findFirstByOwnerAndDateController =
+  new FindFirstByOwnerAndDateController(findFirstByOwnerAndDateUseCase);

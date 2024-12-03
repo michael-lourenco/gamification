@@ -9,7 +9,6 @@ export class CreateLeaderboardUseCase {
 
   async execute(data: CreateLeaderboardDTO): Promise<Leaderboard> {
     try {
-
       data.date = new Date(data.date);
 
       const createdLeaderboard = await this.leaderboardsRepository.create(data);

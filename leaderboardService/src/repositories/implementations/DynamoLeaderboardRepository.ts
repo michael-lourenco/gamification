@@ -3,7 +3,7 @@ import {
   CreateLeaderboardDTO,
   UpdateLeaderboardDTO,
 } from '../ILeaderboardsRepository.js';
-import { Leaderboard,PlayerData } from '../../entities/Leaderboard.js';
+import { Leaderboard, PlayerData } from '../../entities/Leaderboard.js';
 import AWS from 'aws-sdk';
 
 export class DynamoLeaderboardRepository implements ILeaderboardsRepository {
@@ -12,22 +12,19 @@ export class DynamoLeaderboardRepository implements ILeaderboardsRepository {
     private tableName: string,
   ) {}
 
-
   private sortLeaderboard(leaderboard: PlayerData[]): PlayerData[] {
-
     leaderboard.forEach((player) => {
-      if (typeof player.date === "string") {
+      if (typeof player.date === 'string') {
         player.date = new Date(player.date);
       }
     });
-  
+
     leaderboard.sort((a, b) => {
       if (b.score !== a.score) {
-        return b.score - a.score; 
+        return b.score - a.score;
       }
-      return a.date.getTime() - b.date.getTime(); 
+      return a.date.getTime() - b.date.getTime();
     });
-  
 
     return leaderboard;
   }
@@ -106,7 +103,8 @@ export class DynamoLeaderboardRepository implements ILeaderboardsRepository {
     const leaderboardSorted = this.sortLeaderboard(
       leaderboard.leaderboard.map((player) => ({
         ...player,
-        date: typeof player.date === 'string' ? new Date(player.date) : player.date,
+        date:
+          typeof player.date === 'string' ? new Date(player.date) : player.date,
       })),
     );
 

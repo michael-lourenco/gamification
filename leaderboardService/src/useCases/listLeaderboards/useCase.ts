@@ -6,7 +6,9 @@ export class ListLeaderboardsUseCase {
 
   async execute({ owner }: { owner: string }): Promise<Leaderboard[]> {
     try {
-      const listLeaderboards = await this.leaderboardsRepository.findAll({owner});
+      const listLeaderboards = await this.leaderboardsRepository.findAll({
+        owner,
+      });
 
       return listLeaderboards;
     } catch (err) {
