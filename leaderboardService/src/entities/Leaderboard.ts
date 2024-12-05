@@ -19,10 +19,17 @@ export class Leaderboard {
     if (!props.name || !props.owner) {
       throw new Error('Name and owner are required.');
     }
-    Object.assign(this, props);
-    this.id = id ?? uuidv4();
-    this.date = new Date(props.date);
-    this.leaderboard = props.leaderboard ?? [];
+      // Converte o objeto principal `date` em uma instância Date
+      this.date = new Date(props.date);
+
+      // Converte o array de `leaderboard` para garantir que as datas sejam instâncias de Date
+      this.leaderboard = (props.leaderboard || []).map((player) => ({
+        ...player,
+        date: new Date(player.date), // Converte para Date
+      }));
+  
+      Object.assign(this, props);
+      this.id = id ?? uuidv4();
   }
 
   // addPlayer(player: PlayerData) {

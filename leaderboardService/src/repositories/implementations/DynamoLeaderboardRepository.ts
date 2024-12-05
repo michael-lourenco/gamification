@@ -35,11 +35,14 @@ export class DynamoLeaderboardRepository implements ILeaderboardsRepository {
       name: leaderboard.name,
       owner: leaderboard.owner,
       description: leaderboard.description,
-      leaderboard: leaderboard.leaderboard,
+      leaderboard: leaderboard.leaderboard.map((player) => ({
+        ...player,
+        date: player.date ? new Date(player.date).toISOString() : null, // Converte cada `date` para ISO
+      })),
       date: leaderboard.date ? leaderboard.date.toISOString() : null,
     };
   }
-
+  
   private fromDynamoFormat(item: any): Leaderboard {
     return new Leaderboard(
       {
@@ -100,38 +103,40 @@ export class DynamoLeaderboardRepository implements ILeaderboardsRepository {
   }
 
   async create(leaderboard: Leaderboard): Promise<Leaderboard> {
+  
     const leaderboardSorted = this.sortLeaderboard(
       leaderboard.leaderboard.map((player) => ({
         ...player,
-        date:
-          typeof player.date === 'string' ? new Date(player.date) : player.date,
+        date: typeof player.date === 'string' ? new Date(player.date) : player.date,
       })),
     );
-
+  
     leaderboard.leaderboard = leaderboardSorted;
-
+  
+    // Formata para DynamoDB
     const dynamoItem = this.toDynamoFormat(leaderboard);
-
+  
     const params: AWS.DynamoDB.DocumentClient.PutItemInput = {
       TableName: this.tableName,
       Item: dynamoItem,
     };
-
+  
     try {
       await this.dynamoDB.put(params).promise();
       return leaderboard;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(
-          `Failed to fetch leaderboard by owner and date from DynamoDB. Error: ${error.message}`,
+          `Failed to save leaderboard in DynamoDB. Error: ${error.message}`,
         );
       } else {
         throw new Error(
-          `Failed unknown error fetching leaderboard by owner and date from DynamoDB. Error: ${error}`,
+          `Failed unknown error saving leaderboard in DynamoDB. Error: ${error}`,
         );
       }
     }
   }
+  
 
   async findFirstByOwnerAndDate({
     owner,

@@ -4,26 +4,27 @@ import { CreateLeaderboardDTO } from 'repositories/ILeaderboardsRepository.js';
 export class CreateLeaderboardController {
   constructor(private createLeaderboardUseCase: CreateLeaderboardUseCase) {}
 
-  async handler(event: Partial<CreateLeaderboardDTO>) {
+  async handler({ owner, data }: { owner: string;  data: Partial<CreateLeaderboardDTO>}) {
     try {
+      console.log('DATA handler controller  ::::::::::::::: ', data);
       if (
-        !event.id ||
-        !event.name ||
-        !event.owner ||
-        !event.description ||
-        !event.leaderboard ||
-        !event.date
+        !data.id ||
+        !data.name ||
+        !owner ||
+        !data.description ||
+        !data.leaderboard ||
+        !data.date
       ) {
         throw new Error('Missing required fields');
       }
 
       const leaderboardData: CreateLeaderboardDTO = {
-        id: event.id,
-        name: event.name,
-        owner: event.owner,
-        description: event.description,
-        leaderboard: event.leaderboard,
-        date: event.date,
+        id: data.id,
+        name: data.name,
+        owner: owner,
+        description: data.description,
+        leaderboard: data.leaderboard,
+        date: data.date,
       };
 
       const response =

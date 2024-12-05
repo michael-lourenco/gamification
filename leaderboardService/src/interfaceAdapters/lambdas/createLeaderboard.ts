@@ -6,10 +6,27 @@ interface Event {
   body: string;
 }
 
-const handler = async (event: Event) => {
+type CustomEvent = {
+  headers: {
+    [key: string]: string | undefined;
+  };
+  resource?: string;
+  path?: string;
+  httpMethod?: string;
+  [key: string]: any;
+};
+const handler = async (event: CustomEvent) => {
   try {
     if (!event.body) {
       throw HandlerError.invalidInput();
+    }
+
+    const apiKey = event.headers['x-api-key'];
+
+    let owner = '';
+
+    if (apiKey) {
+      owner = apiKey.split('|')[0];
     }
 
     let data: Partial<CreateLeaderboardDTO>;
@@ -34,7 +51,7 @@ const handler = async (event: Event) => {
       }
     }
 
-    const response = await createLeaderboardController.handler(data);
+    const response = await createLeaderboardController.handler({ owner, data });
 
     return {
       statusCode: 200,
