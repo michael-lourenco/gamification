@@ -1,30 +1,48 @@
-import { CreateLeaderboardUseCase } from 'useCases/createLeaderboard/useCase.js';
-import { CreateLeaderboardDTO } from 'repositories/ILeaderboardsRepository.js';
+import { CreateLeaderboardUseCase } from './useCase.js';
+import { IParticipant } from '../../entities/interfaces/IParticipant.js';
+import { RankingCriteria } from '../../entities/criteria/RankingCriteria.js';
 
 export class CreateLeaderboardController {
   constructor(private createLeaderboardUseCase: CreateLeaderboardUseCase) {}
 
-  async handler({ owner, data }: { owner: string;  data: Partial<CreateLeaderboardDTO>}) {
+  async handler({
+    owner,
+    data,
+  }: {
+    owner: string;
+    data: {
+      name?: string;
+      description?: string;
+      date?: string | Date;
+      participants?: IParticipant[];
+      config?: {
+        type: string;
+        limit: number;
+        rankingCriteria: RankingCriteria[];
+      };
+    };
+  }) {
     try {
-      console.log('DATA handler controller  ::::::::::::::: ', data);
+      console.log('DATA handler controller ::::::::::::::: ', data);
+
       if (
-        !data.id ||
         !data.name ||
         !owner ||
         !data.description ||
-        !data.leaderboard ||
-        !data.date
+        !data.date ||
+        !data.participants ||
+        !data.config
       ) {
         throw new Error('Missing required fields');
       }
 
-      const leaderboardData: CreateLeaderboardDTO = {
-        id: data.id,
+      const leaderboardData = {
         name: data.name,
-        owner: owner,
+        owner,
         description: data.description,
-        leaderboard: data.leaderboard,
         date: data.date,
+        participants: data.participants,
+        config: data.config,
       };
 
       const response =

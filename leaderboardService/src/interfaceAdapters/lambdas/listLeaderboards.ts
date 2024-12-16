@@ -13,12 +13,12 @@ type CustomEvent = {
 
 const handler = async (event: CustomEvent) => {
   try {
-    console.log('EVENT  ::::::::::::::: ', event);
+    console.log(`1 - handler - lambda`);
+    // console.log('EVENT  ::::::::::::::: ', event);
 
-    // Tratamento para requisições OPTIONS (Preflight)
     if (event.httpMethod === 'OPTIONS') {
       return {
-        statusCode: 204, // Sem conteúdo
+        statusCode: 204,
         headers: {
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Headers':
@@ -36,8 +36,8 @@ const handler = async (event: CustomEvent) => {
       owner = apiKey.split('|')[0];
     }
 
-    console.log('API KEY  ::::::::::::::: ', apiKey);
-    console.log('OWNER ::::::::::::::: ', owner);
+    // console.log('API KEY  ::::::::::::::: ', apiKey);
+    // console.log('OWNER ::::::::::::::: ', owner);
 
     const response = await listLeaderboardsController.handler({ owner });
 

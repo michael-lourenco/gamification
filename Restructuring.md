@@ -1,0 +1,5 @@
+## Explaining the Changes to the LeaderboardService Structure
+
+The restructuring of the LeaderboardService aimed to make it more generic and extensible, enabling support for multiple ranking criteria. To achieve this, we applied SOLID principles and design patterns such as Strategy and Factory. The main changes included the introduction of **ranking criteria** (in the `entities/criteria` folder) and **ranking strategies** (in `entities/strategies`), which encapsulate specific sorting logic, such as `HighestScoreCriteria` and `PositionRankingStrategy`. This eliminated the dependency on enums, promoting flexibility for adding new criteria.
+
+Additionally, the creation of a `LeaderboardFactory` centralized the configuration for each ranking type, simplifying the system’s creation and future expansion. The updated structure now reflects a clear separation of responsibilities, with interfaces and types (in `entities/interfaces` and `entities/types`) reinforcing a strongly typed and scalable design aligned with software engineering best practices.
