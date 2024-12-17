@@ -18,5 +18,11 @@ export interface ILeaderboardsRepository {
     date: Date;
   }): Promise<Leaderboard<T> | null>;
 
+  update<T extends IParticipant>(
+    id: string, 
+    updatedLeaderboard: Leaderboard<T>,
+  ): Promise<Leaderboard<IParticipant>>;
+
+
   createCriteriaInstance(identifier: string): RankingCriteria;
 }

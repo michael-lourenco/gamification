@@ -214,6 +214,66 @@ export class DynamoLeaderboardRepository implements ILeaderboardsRepository {
     }
   }
 
+  async update<T extends IParticipant>(
+    id: string,
+    updatedLeaderboard: Leaderboard<T>,
+  ): Promise<Leaderboard<T>> {
+    const params: DynamoDB.DocumentClient.UpdateItemInput = {
+      TableName: this.tableName,
+      Key: { id },
+      UpdateExpression:
+        'set #name = :name, #description = :description, #typeIdentifier = :typeIdentifier, ' +
+        '#criteriaIdentifiers = :criteriaIdentifiers, #limit = :limit, #participants = :participants, ' +
+        '#date = :date',
+      ExpressionAttributeNames: {
+        '#name': 'name',
+        '#description': 'description',
+        '#typeIdentifier': 'typeIdentifier',
+        '#criteriaIdentifiers': 'criteriaIdentifiers',
+        '#limit': 'limit',
+        '#participants': 'participants',
+        '#date': 'date',
+      },
+      ExpressionAttributeValues: {
+        ':name': updatedLeaderboard.name,
+        ':description': updatedLeaderboard.description,
+        ':typeIdentifier': updatedLeaderboard.type.identifier,
+        ':criteriaIdentifiers': updatedLeaderboard.rankingCriteria.map((c) => c.identifier),
+        ':limit': updatedLeaderboard.rankingStrategy.getLimit(),
+        ':participants': JSON.stringify(updatedLeaderboard.participants),
+        ':date': updatedLeaderboard.date.toISOString(),
+      },
+      ReturnValues: 'ALL_NEW',
+    };
+
+    try {
+      const result = await this.dynamoDb.update(params).promise();
+
+      const updatedItem = result.Attributes as DynamoLeaderboardItem;
+
+      const rankingStrategy = LeaderboardFactory.createRankingStrategy(
+        new PositionLeaderboard(),
+        updatedItem.limit,
+        updatedItem.criteriaIdentifiers.map(this.createCriteriaInstance),
+      );
+
+      return new Leaderboard<T>({
+        name: updatedItem.name,
+        owner: updatedItem.owner,
+        description: updatedItem.description,
+        type: new PositionLeaderboard(),
+        rankingCriteria: updatedItem.criteriaIdentifiers.map(this.createCriteriaInstance),
+        rankingStrategy,
+        participants: JSON.parse(updatedItem.participants),
+        date: new Date(updatedItem.date),
+      });
+    } catch (err) {
+      console.error('Error in update:', err);
+      throw new Error(`Failed to update leaderboard: ${err}`);
+    }
+  }
+
+
   public createCriteriaInstance(identifier: string): RankingCriteria {
     switch (identifier) {
       case 'HIGHEST_SCORE':

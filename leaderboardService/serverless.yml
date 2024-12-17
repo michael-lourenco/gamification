@@ -156,23 +156,23 @@ functions:
             allowCredentials: false
 
 
-  # updateLeaderboard:
-  #   handler: dist/interfaceAdapters/lambdas/updateLeaderboard.handler
-  #   logRetentionInDays: 14
-  #   memorySize: 128
-  #   timeout: 30
-  #   ephemeralStorageSize: 512
-  #   events:
-  #     - http:
-  #         path: leaderboards/update
-  #         method: put
-  #         cors:
-  #           origin: '*'
-  #           headers:
-  #             - Content-Type
-  #             - x-api-key
-  #             - Authorization
-  #           allowCredentials: false
+  updateLeaderboard:
+    handler: dist/interfaceAdapters/lambdas/updateLeaderboard.handler
+    logRetentionInDays: 14
+    memorySize: 128
+    timeout: 30
+    ephemeralStorageSize: 512
+    events:
+      - http:
+          path: leaderboards/update
+          method: put
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-api-key
+              - Authorization
+            allowCredentials: false
 
 plugins:
   - serverless-plugin-typescript
