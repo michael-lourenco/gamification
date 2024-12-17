@@ -7,10 +7,21 @@ import { IParticipant } from '../entities/interfaces/IParticipant.js';
 import { IRankingStrategy } from '../entities/interfaces/IRankingStrategy.js';
 import { RankingCriteria } from '../entities/criteria/RankingCriteria.js';
 
+
+export enum LeaderboardTypeEnum {
+  POSITION = "POSITION",
+  SCORE = "SCORE",
+}
+
+
+export enum RankingStrategyEnum {
+  POSITION = "POSITION",
+  SCORE = "SCORE",
+}
 export class LeaderboardFactory {
   private static readonly typeMap: Map<string, new () => LeaderboardType> =
     new Map<string, new () => LeaderboardType>([
-      ['POSITION', PositionLeaderboard],
+      [LeaderboardTypeEnum.POSITION, PositionLeaderboard],
     ]);
 
   private static readonly strategyMap: Map<
@@ -19,7 +30,7 @@ export class LeaderboardFactory {
   > = new Map<
     string,
     new (limit: number, criteria: RankingCriteria[]) => IRankingStrategy<any>
-  >([['POSITION', PositionRankingStrategy]]);
+  >([[RankingStrategyEnum.POSITION, PositionRankingStrategy]]);
 
   static createLeaderboard<T extends IParticipant>(
     config: ILeaderboardConfig,

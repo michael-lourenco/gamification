@@ -150,29 +150,69 @@ export class DynamoLeaderboardRepository implements ILeaderboardsRepository {
     }
   }
 
-  // async findFirstByOwnerAndDate(params: {
-  //   owner: string;
-  //   date: Date;
-  // }): Promise<Leaderboard<any> | null> {
-  //   const result = await this.dynamoDb
-  //     .query({
-  //       TableName: this.tableName,
-  //       IndexName: 'GSI1',
-  //       KeyConditionExpression:
-  //         'GSI1PK = :gsi1pk AND begins_with(GSI1SK, :gsi1sk)',
-  //       ExpressionAttributeValues: {
-  //         ':gsi1pk': `OWNER#${params.owner}`,
-  //         ':gsi1sk': `DATE#${params.date.toISOString().split('T')[0]}`,
-  //       },
-  //       Limit: 1,
-  //     })
-  //     .promise();
+  async findFirstByOwnerAndDate<T extends IParticipant>(params: { owner: string; date: Date }
+  ): Promise<Leaderboard<T> | null> {
+    const { owner, date } = params;
 
-  //   if (!result.Items?.[0]) return null;
+    const startOfDay = new Date(date);
+    startOfDay.setUTCHours(0, 0, 0, 0);
 
-  //   const item = result.Items[0] as DynamoLeaderboardItem;
-  //   return this.findById(item.id);
-  // }
+    const endOfDay = new Date(date);
+    endOfDay.setUTCHours(23, 59, 59, 999);
+
+    const queryParams: AWS.DynamoDB.DocumentClient.QueryInput = {
+      TableName: this.tableName,
+      IndexName: 'OwnerDateIndex',
+      KeyConditionExpression:
+        '#owner = :owner and #date BETWEEN :startOfDay AND :endOfDay',
+      ExpressionAttributeNames: {
+        '#owner': 'owner',
+        '#date': 'date',
+      },
+      ExpressionAttributeValues: {
+        ':owner': owner,
+        ':startOfDay': startOfDay.toISOString(),
+        ':endOfDay': endOfDay.toISOString(),
+      },
+      Limit: 1,
+    };
+
+    try {
+      console.log(`4 - findFirstByOwnerAndDate - DynamoLeaderboardRepository`);
+      const result = await this.dynamoDb
+        .query(queryParams)
+        .promise();
+
+        if (!result.Items || result.Items.length === 0) {
+          return null;
+        }
+    
+        const leaderboardItem = result.Items[0] as DynamoLeaderboardItem;
+    
+        const rankingStrategy = LeaderboardFactory.createRankingStrategy(
+          new PositionLeaderboard(),
+          leaderboardItem.limit,
+          leaderboardItem.criteriaIdentifiers.map(this.createCriteriaInstance)
+        );
+    
+        return new Leaderboard<T>({
+          name: leaderboardItem.name,
+          owner: leaderboardItem.owner,
+          description: leaderboardItem.description,
+          type: new PositionLeaderboard(),
+          rankingCriteria: leaderboardItem.criteriaIdentifiers.map(
+            this.createCriteriaInstance
+          ),
+          rankingStrategy,
+          participants: JSON.parse(leaderboardItem.participants),
+          date: new Date(leaderboardItem.date),
+        });
+
+    } catch (err) {
+      console.error('Error in findAllByOwner:', err);
+      throw err;
+    }
+  }
 
   public createCriteriaInstance(identifier: string): RankingCriteria {
     switch (identifier) {

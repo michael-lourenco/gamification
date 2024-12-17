@@ -127,33 +127,33 @@ functions:
               - Authorization
             allowCredentials: false
 
-  # findFirstByOwnerAndDate:
-  #   handler: dist/interfaceAdapters/lambdas/findFirstByOwnerAndDate.handler
-  #   logRetentionInDays: 14
-  #   memorySize: 128
-  #   timeout: 30
-  #   ephemeralStorageSize: 512
-  #   events:
-  #     - http:
-  #         path: leaderboards/findFirstByOwnerAndDate/{date}
-  #         method: get
-  #         cors:
-  #           origin: '*'
-  #           headers:
-  #             - Content-Type
-  #             - x-api-key
-  #             - Authorization
-  #           allowCredentials: false
-  #     - http:
-  #         path: leaderboards/findFirstByOwnerAndDate/{date}
-  #         method: options
-  #         cors:
-  #           origin: '*'
-  #           headers:
-  #             - Content-Type
-  #             - x-api-key
-  #             - Authorization
-  #           allowCredentials: false
+  findFirstByOwnerAndDate:
+    handler: dist/interfaceAdapters/lambdas/findFirstByOwnerAndDate.handler
+    logRetentionInDays: 14
+    memorySize: 128
+    timeout: 30
+    ephemeralStorageSize: 512
+    events:
+      - http:
+          path: leaderboards/findFirstByOwnerAndDate/{date}
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-api-key
+              - Authorization
+            allowCredentials: false
+      - http:
+          path: leaderboards/findFirstByOwnerAndDate/{date}
+          method: options
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-api-key
+              - Authorization
+            allowCredentials: false
 
 
   # updateLeaderboard:

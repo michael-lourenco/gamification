@@ -13,10 +13,10 @@ export interface ILeaderboardsRepository {
     owner: string,
   ): Promise<Leaderboard<T>[]>;
 
-  // findFirstByOwnerAndDate<T extends IParticipant>(params: {
-  //   owner: string;
-  //   date: Date;
-  // }): Promise<Leaderboard<T> | null>;
+  findFirstByOwnerAndDate<T extends IParticipant>(params: {
+    owner: string;
+    date: Date;
+  }): Promise<Leaderboard<T> | null>;
 
   createCriteriaInstance(identifier: string): RankingCriteria;
 }
