@@ -1,22 +1,32 @@
-import { IParticipant } from 'entities/interfaces/IParticipant.js';
-import { Leaderboard } from 'entities/Leaderboard.js';
-import { RankingCriteria } from 'entities/criteria/RankingCriteria.js';
+import { Leaderboard, PlayerData } from 'entities/Leaderboard.js';
+
+export interface CreateLeaderboardDTO {
+  id: string;
+  name: string;
+  owner: string;
+  description: string;
+  leaderboard: PlayerData[];
+  date: Date;
+}
+
+export interface UpdateLeaderboardDTO {
+  id: string;
+  name: string;
+  owner: string;
+  description: string;
+  leaderboard: PlayerData[];
+  date: Date;
+}
 
 export interface ILeaderboardsRepository {
-  save<T extends IParticipant>(
-    leaderboard: Leaderboard<T>,
-  ): Promise<Leaderboard<IParticipant>>;
-
-  // findById<T extends IParticipant>(id: string): Promise<Leaderboard<T> | null>;
-
-  findAllByOwner<T extends IParticipant>(
-    owner: string,
-  ): Promise<Leaderboard<T>[]>;
-
-  findFirstByOwnerAndDate<T extends IParticipant>(params: {
+  create(leaderboard: CreateLeaderboardDTO): Promise<Leaderboard>;
+  findAll({ owner }: { owner: string }): Promise<Leaderboard[]>;
+  findFirstByOwnerAndDate({
+    owner,
+    date,
+  }: {
     owner: string;
     date: Date;
-  }): Promise<Leaderboard<T> | null>;
-
-  createCriteriaInstance(identifier: string): RankingCriteria;
+  }): Promise<Leaderboard | null>;
+  update(leaderboard: UpdateLeaderboardDTO): Promise<Leaderboard>;
 }

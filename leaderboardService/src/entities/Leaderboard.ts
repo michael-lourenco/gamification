@@ -1,56 +1,59 @@
 import { v4 as uuidv4 } from 'uuid';
-import { IRankingStrategy } from './interfaces/IRankingStrategy.js';
-import { IParticipant } from './interfaces/IParticipant.js';
-import { LeaderboardType } from './types/LeaderboardType.js';
-import { RankingCriteria } from './criteria/RankingCriteria.js';
 
-export class Leaderboard<T extends IParticipant> {
+export interface PlayerData {
+  id: string;
+  name: string;
+  score: number;
+  date: Date;
+}
+
+export class Leaderboard {
   public readonly id: string;
   public name: string;
   public readonly owner: string;
   public description: string;
-  public participants: T[];
+  public leaderboard: PlayerData[];
   public date: Date;
-  public readonly type: LeaderboardType;
-  public readonly rankingCriteria: RankingCriteria[];
-  public rankingStrategy: IRankingStrategy<T>;
 
-  constructor(
-    props: {
-      name: string;
-      owner: string;
-      description: string;
-      participants: T[];
-      date: Date;
-      rankingStrategy: IRankingStrategy<T>;
-      type: LeaderboardType;
-      rankingCriteria: RankingCriteria[];
-    },
-    id?: string,
-  ) {
+  constructor(props: Omit<Leaderboard, 'id'>, id?: string) {
     if (!props.name || !props.owner) {
       throw new Error('Name and owner are required.');
     }
+      // Converte o objeto principal `date` em uma instância Date
+      this.date = new Date(props.date);
 
-    this.name = props.name;
-    this.owner = props.owner;
-    this.description = props.description;
-    this.participants = props.participants.map((p) => ({
-      ...p,
-      date: new Date(p.date),
-    }));
-    this.date = new Date(props.date);
-    this.rankingStrategy = props.rankingStrategy;
-    this.type = props.type;
-    this.rankingCriteria = props.rankingCriteria;
-    this.id = id ?? uuidv4();
+      // Converte o array de `leaderboard` para garantir que as datas sejam instâncias de Date
+      this.leaderboard = (props.leaderboard || []).map((player) => ({
+        ...player,
+        date: new Date(player.date), // Converte para Date
+      }));
+  
+      Object.assign(this, props);
+      this.id = id ?? uuidv4();
   }
 
-  getRanking(): T[] {
-    return this.rankingStrategy.rank(this.participants);
-  }
+  // addPlayer(player: PlayerData) {
+  //   if (this.leaderboard.some(p => p.id === player.id)) {
+  //     throw new Error('Player already exists in the leaderboard.');
+  //   }
+  //   this.leaderboard.push(player);
+  // }
 
-  getRankingStrategy(): IRankingStrategy<T> {
-    return this.rankingStrategy;
-  }
+  // removePlayer(playerId: string) {
+  //   this.leaderboard = this.leaderboard.filter(player => player.id !== playerId);
+  // }
+
+  // updatePlayerScore(playerId: string, score: number) {
+  //   const player = this.leaderboard.find(player => player.id === playerId);
+  //   if (!player) {
+  //     throw new Error('Player not found.');
+  //   }
+  //   player.score = score;
+  // }
+
+  // getTopPlayers(limit: number): PlayerData[] {
+  //   return this.leaderboard
+  //     .sort((a, b) => b.score - a.score)
+  //     .slice(0, limit);
+  // }
 }

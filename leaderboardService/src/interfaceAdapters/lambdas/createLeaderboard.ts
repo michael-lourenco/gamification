@@ -1,7 +1,6 @@
 import { createLeaderboardController } from '../../useCases/createLeaderboard/index.js';
+import { CreateLeaderboardDTO } from '../../repositories/ILeaderboardsRepository.js';
 import { HandlerError } from '../../errors/handlerError.js';
-import { IParticipant } from '../../entities/interfaces/IParticipant.js';
-import { RankingCriteria } from '../../entities/criteria/RankingCriteria.js';
 
 interface Event {
   body: string;
@@ -16,7 +15,6 @@ type CustomEvent = {
   httpMethod?: string;
   [key: string]: any;
 };
-
 const handler = async (event: CustomEvent) => {
   try {
     if (!event.body) {
@@ -31,32 +29,21 @@ const handler = async (event: CustomEvent) => {
       owner = apiKey.split('|')[0];
     }
 
-    let data: {
-      name?: string;
-      description?: string;
-      date?: string | Date;
-      participants?: IParticipant[];
-      config?: {
-        type: string;
-        limit: number;
-        rankingCriteria: RankingCriteria[];
-      };
-    };
-
+    let data: Partial<CreateLeaderboardDTO>;
     try {
       data = JSON.parse(event.body);
     } catch (err) {
       throw HandlerError.invalidInput();
     }
 
-    // Campos obrigatórios
-    const requiredFields = [
+    const requiredFields: (keyof CreateLeaderboardDTO)[] = [
+      'id',
       'name',
+      'owner',
       'description',
+      'leaderboard',
       'date',
-      'participants',
-      'config',
-    ] as const;
+    ];
 
     for (const field of requiredFields) {
       if (!data[field]) {

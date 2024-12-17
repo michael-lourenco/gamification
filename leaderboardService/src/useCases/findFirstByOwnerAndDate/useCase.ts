@@ -1,5 +1,4 @@
 import { ILeaderboardsRepository } from 'repositories/ILeaderboardsRepository.js';
-import { IParticipant } from '../../entities/interfaces/IParticipant.js';
 import { Leaderboard } from 'entities/Leaderboard.js';
 
 export class FindFirstByOwnerAndDateUseCase {
@@ -11,7 +10,7 @@ export class FindFirstByOwnerAndDateUseCase {
   }: {
     owner: string;
     date: Date;
-  }): Promise<Leaderboard<IParticipant> | null> {
+  }): Promise<Leaderboard | null> {
     try {
       const leaderboard =
         await this.leaderboardsRepository.findFirstByOwnerAndDate({
