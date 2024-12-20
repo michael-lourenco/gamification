@@ -13,7 +13,8 @@ export class CreateLeaderboardController {
         !owner ||
         !data.description ||
         !data.leaderboard ||
-        !data.date
+        !data.date ||
+        !data.type
       ) {
         throw new Error('Missing required fields');
       }
@@ -25,6 +26,7 @@ export class CreateLeaderboardController {
         description: data.description,
         leaderboard: data.leaderboard,
         date: data.date,
+        type: data.type
       };
 
       const response =

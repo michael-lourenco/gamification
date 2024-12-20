@@ -14,10 +14,11 @@ export class Leaderboard {
   public description: string;
   public leaderboard: PlayerData[];
   public date: Date;
+  public readonly type: string;
 
   constructor(props: Omit<Leaderboard, 'id'>, id?: string) {
-    if (!props.name || !props.owner) {
-      throw new Error('Name and owner are required.');
+    if (!props.name || !props.owner || !props.type) {
+      throw new Error('Name, owner and type are required.');
     }
       // Converte o objeto principal `date` em uma instância Date
       this.date = new Date(props.date);

@@ -8,6 +8,7 @@ interface Event {
 
 const handler = async (event: Event) => {
   try {
+
     if (!event.body) {
       throw HandlerError.invalidInput();
     }
@@ -26,6 +27,7 @@ const handler = async (event: Event) => {
       'description',
       'leaderboard',
       'date',
+      'type',
     ];
 
     for (const field of requiredFields) {

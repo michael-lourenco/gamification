@@ -59,7 +59,9 @@ resources:
           - AttributeName: owner
             AttributeType: S
           - AttributeName: date
-            AttributeType: S 
+            AttributeType: S
+          - AttributeName: type
+            AttributeType: S
         KeySchema:
           - AttributeName: uid
             KeyType: HASH
@@ -76,6 +78,14 @@ resources:
               - AttributeName: owner
                 KeyType: HASH
               - AttributeName: date
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: OwnerTypeIndex
+            KeySchema:
+              - AttributeName: owner
+                KeyType: HASH
+              - AttributeName: type
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
@@ -155,24 +165,51 @@ functions:
               - Authorization
             allowCredentials: false
 
+  findFirstByOwnerDateAndType:
+    handler: dist/interfaceAdapters/lambdas/findFirstByOwnerDateAndType.handler
+    logRetentionInDays: 14
+    memorySize: 128
+    timeout: 30
+    ephemeralStorageSize: 512
+    events:
+      - http:
+          path: leaderboards/findFirstByOwnerDateAndType/{date}/{type}
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-api-key
+              - Authorization
+            allowCredentials: false
+      - http:
+          path: leaderboards/findFirstByOwnerDateAndType/{date}/{type}
+          method: options
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-api-key
+              - Authorization
+            allowCredentials: false
 
-  # updateLeaderboard:
-  #   handler: dist/interfaceAdapters/lambdas/updateLeaderboard.handler
-  #   logRetentionInDays: 14
-  #   memorySize: 128
-  #   timeout: 30
-  #   ephemeralStorageSize: 512
-  #   events:
-  #     - http:
-  #         path: leaderboards/update
-  #         method: put
-  #         cors:
-  #           origin: '*'
-  #           headers:
-  #             - Content-Type
-  #             - x-api-key
-  #             - Authorization
-  #           allowCredentials: false
+  updateLeaderboard:
+    handler: dist/interfaceAdapters/lambdas/updateLeaderboard.handler
+    logRetentionInDays: 14
+    memorySize: 128
+    timeout: 30
+    ephemeralStorageSize: 512
+    events:
+      - http:
+          path: leaderboards/update
+          method: put
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - x-api-key
+              - Authorization
+            allowCredentials: false
 
 plugins:
   - serverless-plugin-typescript

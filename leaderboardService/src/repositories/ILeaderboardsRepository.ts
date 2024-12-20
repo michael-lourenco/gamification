@@ -7,6 +7,7 @@ export interface CreateLeaderboardDTO {
   description: string;
   leaderboard: PlayerData[];
   date: Date;
+  type: string;
 }
 
 export interface UpdateLeaderboardDTO {
@@ -16,6 +17,7 @@ export interface UpdateLeaderboardDTO {
   description: string;
   leaderboard: PlayerData[];
   date: Date;
+  type: string;
 }
 
 export interface ILeaderboardsRepository {
@@ -27,6 +29,16 @@ export interface ILeaderboardsRepository {
   }: {
     owner: string;
     date: Date;
+  }): Promise<Leaderboard | null>;
+
+  findFirstByOwnerDateAndType({
+    owner,
+    date,
+    type
+  }: {
+    owner: string;
+    date: Date;
+    type: string;
   }): Promise<Leaderboard | null>;
   update(leaderboard: UpdateLeaderboardDTO): Promise<Leaderboard>;
 }

@@ -12,7 +12,8 @@ export class UpdateLeaderboardController {
         !event.owner ||
         !event.description ||
         !event.leaderboard ||
-        !event.date
+        !event.date ||
+        !event.type
       ) {
         throw new Error('Missing required fields');
       }
@@ -24,6 +25,7 @@ export class UpdateLeaderboardController {
         description: event.description,
         leaderboard: event.leaderboard,
         date: event.date,
+        type: event.type
       };
 
       const response =

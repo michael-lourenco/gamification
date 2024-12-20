@@ -1,10 +1,5 @@
-import { createLeaderboardController } from '../../useCases/createLeaderboard/index.js';
-import { CreateLeaderboardDTO } from '../../repositories/ILeaderboardsRepository.js';
+import { findFirstByOwnerDateAndTypeController } from '../../useCases/findFirstByOwnerDateAndType/index.js';
 import { HandlerError } from '../../errors/handlerError.js';
-
-interface Event {
-  body: string;
-}
 
 type CustomEvent = {
   headers: {
@@ -15,13 +10,27 @@ type CustomEvent = {
   httpMethod?: string;
   [key: string]: any;
 };
+
 const handler = async (event: CustomEvent) => {
   try {
-    if (!event.body) {
-      throw HandlerError.invalidInput();
+    console.log('EVENT  ::::::::::::::: ', event);
+
+    if (event.httpMethod === 'OPTIONS') {
+      return {
+        statusCode: 204,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers':
+            'Content-Type,x-api-key,Authorization',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        },
+      };
     }
 
     const apiKey = event.headers['x-api-key'];
+
+    const date = new Date(event.pathParameters.date);
+    const type = event.pathParameters.type;
 
     let owner = '';
 
@@ -29,33 +38,21 @@ const handler = async (event: CustomEvent) => {
       owner = apiKey.split('|')[0];
     }
 
-    let data: Partial<CreateLeaderboardDTO>;
-    try {
-      data = JSON.parse(event.body);
-    } catch (err) {
-      throw HandlerError.invalidInput();
-    }
-
-    const requiredFields: (keyof CreateLeaderboardDTO)[] = [
-      'id',
-      'name',
-      'owner',
-      'description',
-      'leaderboard',
-      'date',
-      'type',
-    ];
-
-    for (const field of requiredFields) {
-      if (!data[field]) {
-        throw HandlerError.invalidInput();
-      }
-    }
-
-    const response = await createLeaderboardController.handler({ owner, data });
+    const response = await findFirstByOwnerDateAndTypeController.handler({
+      owner,
+      date,
+      type,
+    });
 
     return {
       statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type,x-api-key,Authorization',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Expose-Headers':
+          'WWW-Authenticate,Server-Authorization',
+      },
       body: JSON.stringify(response),
     };
   } catch (err) {
@@ -66,6 +63,9 @@ const handler = async (event: CustomEvent) => {
       const defaultError = HandlerError.default(error);
       return {
         statusCode: defaultError['statusCode'],
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
         body: JSON.stringify({
           message: defaultError.message,
           errorCode: defaultError['errorCode'],
@@ -78,6 +78,9 @@ const handler = async (event: CustomEvent) => {
 
     return {
       statusCode: defaultError['statusCode'],
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
       body: JSON.stringify({
         message: defaultError.message,
         errorCode: defaultError['errorCode'],
