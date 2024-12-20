@@ -1,0 +1,285 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Leaderboard API",
+    "description": "API para gerenciamento de leaderboards",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://{apiId}.execute-api.us-east-1.amazonaws.com/{stage}",
+      "variables": {
+        "apiId": {
+          "default": "your-api-id"
+        },
+        "stage": {
+          "default": "dev"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/leaderboards/create": {
+      "post": {
+        "summary": "Cria um novo leaderboard",
+        "operationId": "createLeaderboard",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Leaderboard criado com sucesso"
+          },
+          "400": {
+            "description": "Erro na requisição"
+          }
+        },
+        "security": [
+          {
+            "api_key": [
+              
+            ]
+          }
+        ],
+        "tags": [
+          "Leaderboards"
+        ]
+      }
+    },
+    "/leaderboards/list": {
+      "get": {
+        "summary": "Lista todos os leaderboards",
+        "operationId": "listLeaderboards",
+        "responses": {
+          "200": {
+            "description": "Lista retornada com sucesso"
+          },
+          "400": {
+            "description": "Erro na requisição"
+          }
+        },
+        "security": [
+          {
+            "api_key": [
+              
+            ]
+          }
+        ],
+        "tags": [
+          "Leaderboards"
+        ]
+      },
+      "options": {
+        "summary": "Opções da rota leaderboards/list",
+        "responses": {
+          "200": {
+            "description": "Opções disponíveis"
+          }
+        },
+        "tags": [
+          "Leaderboards"
+        ]
+      }
+    },
+"/leaderboards/findFirstByOwnerAndDate/{date}": {
+  "get": {
+    "summary": "Busca o primeiro leaderboard de um proprietário por data",
+    "operationId": "findFirstByOwnerAndDate",
+    "parameters": [
+      {
+        "name": "date",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Data do leaderboard"
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Leaderboard retornado com sucesso"
+      },
+      "400": {
+        "description": "Erro na requisição"
+      }
+    },
+    "security": [
+      {
+        "api_key": []
+      }
+    ],
+    "tags": [
+      "Leaderboards"
+    ]
+  },
+  "options": {
+    "summary": "Opções da rota leaderboards/findFirstByOwnerAndDate/{date}",
+    "parameters": [
+      {
+        "name": "date",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Data do leaderboard"
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Opções disponíveis"
+      }
+    },
+    "tags": [
+      "Leaderboards"
+    ]
+  }
+},
+"/leaderboards/findFirstByOwnerDateAndType/{date}/{type}": {
+  "get": {
+    "summary": "Busca o primeiro leaderboard de um proprietário por data e tipo",
+    "operationId": "findFirstByOwnerDateAndType",
+    "parameters": [
+      {
+        "name": "date",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Data do leaderboard"
+      },
+      {
+        "name": "type",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Tipo do leaderboard"
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Leaderboard retornado com sucesso"
+      },
+      "400": {
+        "description": "Erro na requisição"
+      }
+    },
+    "security": [
+      {
+        "api_key": []
+      }
+    ],
+    "tags": [
+      "Leaderboards"
+    ]
+  },
+  "options": {
+    "summary": "Opções da rota leaderboards/findFirstByOwnerDateAndType/{date}/{type}",
+    "parameters": [
+      {
+        "name": "date",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Data do leaderboard"
+      },
+      {
+        "name": "type",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Tipo do leaderboard"
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Opções disponíveis"
+      }
+    },
+    "tags": [
+      "Leaderboards"
+    ]
+  }
+},
+
+    "/leaderboards/update": {
+      "put": {
+        "summary": "Atualiza um leaderboard",
+        "operationId": "updateLeaderboard",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "example": {
+                  
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Leaderboard atualizado com sucesso"
+          },
+          "400": {
+            "description": "Erro na requisição"
+          }
+        },
+        "security": [
+          {
+            "api_key": [
+              
+            ]
+          }
+        ],
+        "tags": [
+          "Leaderboards"
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "api_key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Mensagem de erro"
+          },
+          "code": {
+            "type": "integer",
+            "description": "Código de erro"
+          }
+        }
+      }
+    }
+  }
+}

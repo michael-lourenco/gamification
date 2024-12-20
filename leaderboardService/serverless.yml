@@ -211,6 +211,13 @@ functions:
               - Authorization
             allowCredentials: false
 
+  swaggerDocumentation:
+    handler: dist/interfaceAdapters/lambdas/swaggerDoc.handler
+    events:
+      - http:
+          path: docs
+          method: get
+
 plugins:
   - serverless-plugin-typescript
   - serverless-plugin-include-dependencies
@@ -223,8 +230,9 @@ package:
     - src/**
   include:
   #   - src/services/**
-    - dist/**
-
+    - dist/** 
+    - swagger/leaderboard-api.yaml
+    
 
 # custom:
 #   serverless-offline:
